@@ -8,7 +8,8 @@ of 1.00 seconds to less than 0.10 seconds (wall clock).
 ## Installing
 
 Since this plugin is not entirely written in zsh (unlike antigen), it has a few
-more installation steps.
+more installation steps. In addition to this README, check out this [diff] to
+my dotfiles repository where I replace antigen with antigen-hs.
 
 ### Haskell and packages
 
@@ -76,3 +77,4 @@ repositories in `~/.antigen-hs/repos` manually yourself!
 
 [antigen]: https://github.com/zsh-users/antigen
 [Shelly]: https://github.com/yesodweb/Shelly.hs
+[diff]: https://github.com/Tarrasch/dotfiles/commit/00c3b34c1e1e13d9b0f634611e5bdb5e42211b22
