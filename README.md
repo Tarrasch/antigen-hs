@@ -5,6 +5,11 @@ shell. I created this plugin because I realized that antigen were the main
 cause of slow zsh startup times. After the switch, I went from a loading time
 of 1.00 seconds to less than 0.10 seconds (wall clock).
 
+The performance improvement is achieved by *generating* a shell script
+consisting of commands to source your plugin scripts. The script contains
+full absolute paths of your plugins scripts. In antigen, the paths are
+calculated every time a new shell is opened.
+
 ## Installing
 
 Since this plugin is not entirely written in zsh (unlike antigen), it has a few
