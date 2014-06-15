@@ -66,7 +66,9 @@ main :: IO ()
 main = shelly $ antigen config
 ```
 
-Now edit this file accordingly by adding your own plugins. Then you're done! :)
+Now edit this file accordingly by adding your own plugins. Then you're done!
+You can get some inspiration from the author's
+[~/.zsh/MyAntigen.hs](https://github.com/Tarrasch/dotfiles/blob/master/zsh/MyAntigen.hs).
 
 ## Usage
 
