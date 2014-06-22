@@ -40,7 +40,7 @@ outputFileToSource :: FilePath
 outputFileToSource = outputDirectory </> "antigen-hs.zsh"
 
 
--- | Like `antigen bundle` from antigen. It assumed you want a github
+-- | Like `antigen bundle` from antigen. It assumes you want a github
 -- repository.
 bundle :: Text -> ZshPlugin
 bundle = GitRepository . ("https://github.com/" <>)
@@ -87,7 +87,7 @@ findPluginZsh plugin = do
   case filter (endsWith ".plugin.zsh" . toTextIgnore) files of
     [file] -> return file
     [] -> terror "No *.plugin.zsh file!"
-    xs -> terror "To many *.plugin.zsh files!"
+    xs -> terror "Too many *.plugin.zsh files!"
 
 
 -- | endsWith ".txt" "hello.txt" ==> True
