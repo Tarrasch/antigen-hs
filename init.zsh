@@ -4,10 +4,6 @@ then
   echo "Put this file in '~/.zsh/antigen-hs/init.zsh' please!"
 fi
 
-antigen-hs-compile () {
-  runghc -i"$HOME/.zsh/antigen-hs/" -- "$HOME/.zsh/MyAntigen.hs"
-}
-
 () {
   local FILE_TO_SOURCE="$HOME/.antigen-hs/antigen-hs.zsh"
   if [[ -f $FILE_TO_SOURCE ]]
@@ -17,4 +13,15 @@ antigen-hs-compile () {
     echo "Didn't find file $FILE_TO_SOURCE"
     echo "Try running antigen-hs-compile"
   fi
+}
+
+antigen-hs-compile () {
+  runghc -i"$HOME/.zsh/antigen-hs/" -- "$HOME/.zsh/MyAntigen.hs"
+}
+
+antigen-update() {
+    for folder in $(find $HOME/.antigen-hs/repos/ -maxdepth 1 -mindepth 1 -type d); do
+        echo "\nIn folder $folder"
+        cd $folder && git pull origin master
+    done
 }
