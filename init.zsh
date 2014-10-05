@@ -24,4 +24,41 @@ antigen-update() {
         echo "\nIn folder $folder"
         cd $folder && git pull origin master
     done
+    antigen-hs-compile
+}
+
+antigen-bundle() {
+    echo "\tbundle \"$1\"," >> $HOME/.zsh/bundles
+    BUNDLES=$(cat $HOME/.zsh/bundles)
+    rm -f $HOME/.zsh/MyAntigen.hs
+
+    HEADER='
+    {-# LANGUAGE OverloadedStrings #-}
+    {-# LANGUAGE ExtendedDefaultRules #-}
+    module MyAntigen where
+
+    import Antigen (AntigenConfiguration (..), bundle, antigen)
+    import Shelly (shelly)
+
+    bundles =
+    [
+    '
+
+    FOOTER='
+    bundle "srijanshetty/custom"
+    -- Add your plugins here
+    ]
+
+    config = AntigenConfiguration bundles
+
+    main :: IO ()
+    main = shelly $ antigen config
+    '
+
+    echo "$HEADER $BUNDLES $FOOTER" > $HOME/.zsh/MyAntigen.hs
+    antigen-hs-compile
+}
+
+antigen-list() {
+    cat $HOME/.zsh/bundles
 }
