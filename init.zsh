@@ -4,6 +4,10 @@ then
   echo "Put this file in '~/.zsh/antigen-hs/init.zsh' please!"
 fi
 
+# Get the list of bundles
+list=("${(f)$(< $HOME/.zsh/bundles)}")
+BUNDLES=$(IFS=','; echo "${list[*]}"; IFS=$' \t\n')
+
 () {
   local FILE_TO_SOURCE="$HOME/.antigen-hs/antigen-hs.zsh"
   if [[ -f $FILE_TO_SOURCE ]]
@@ -15,8 +19,33 @@ fi
   fi
 }
 
+antigen-create() {
+    [ -e $HOME/.zsh/MyAntigen.hs ] && rm -f $HOME/.zsh/MyAntigen.hs
+
+    HEADER='
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ExtendedDefaultRules #-}
+module MyAntigen where
+
+import Antigen (AntigenConfiguration (..), bundle, antigen)
+import Shelly (shelly)
+
+bundles = [
+'
+
+    FOOTER=']
+
+config = AntigenConfiguration bundles
+
+main :: IO ()
+main = shelly $ antigen config
+'
+    echo "$HEADER $BUNDLES $FOOTER" > $HOME/.zsh/MyAntigen.hs
+}
+
 antigen-hs-compile () {
-  runghc -i"$HOME/.zsh/antigen-hs/" -- "$HOME/.zsh/MyAntigen.hs"
+    antigen-create
+    runghc -i"$HOME/.zsh/antigen-hs/" -- "$HOME/.zsh/MyAntigen.hs"
 }
 
 antigen-update() {
@@ -27,38 +56,11 @@ antigen-update() {
     antigen-hs-compile
 }
 
-antigen-bundle() {
-    echo "\tbundle \"$1\"," >> $HOME/.zsh/bundles
-    BUNDLES=$(cat $HOME/.zsh/bundles)
-    rm -f $HOME/.zsh/MyAntigen.hs
-
-    HEADER='
-    {-# LANGUAGE OverloadedStrings #-}
-    {-# LANGUAGE ExtendedDefaultRules #-}
-    module MyAntigen where
-
-    import Antigen (AntigenConfiguration (..), bundle, antigen)
-    import Shelly (shelly)
-
-    bundles =
-    [
-    '
-
-    FOOTER='
-    bundle "srijanshetty/custom"
-    -- Add your plugins here
-    ]
-
-    config = AntigenConfiguration bundles
-
-    main :: IO ()
-    main = shelly $ antigen config
-    '
-
-    echo "$HEADER $BUNDLES $FOOTER" > $HOME/.zsh/MyAntigen.hs
+antigen-add() {
+    echo "bundle \"$1\"" >> $HOME/.zsh/bundles
     antigen-hs-compile
 }
 
 antigen-list() {
-    cat $HOME/.zsh/bundles
+    IFS=$'\n'; echo "${list[*]}\n"; IFS=$' \t\n'
 }
