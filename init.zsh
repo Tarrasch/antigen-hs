@@ -17,6 +17,7 @@ fi
 
 antigen-create() {
     # Get the list of bundles
+    [ -e $HOME/.zsh/bundles ] || touch $HOME/.zsh/bundles
     list=("${(f)$(< $HOME/.zsh/bundles)}")
     BUNDLES=$(IFS=','; echo "${list[*]}"; IFS=$' \t\n')
 
