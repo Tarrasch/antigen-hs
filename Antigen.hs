@@ -67,7 +67,7 @@ ensurePlugin plugin = do
 -- | Clone the repository
 clonePlugin :: ZshPlugin -> Sh ()
 clonePlugin plugin@(GitRepository url) =
-  cmd "git" "clone" "--" url (pluginPath plugin)
+  cmd "git" "clone" "--recursive" "--" url (pluginPath plugin)
 
 
 -- | (Used in my REPL development)
