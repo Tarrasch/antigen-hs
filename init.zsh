@@ -74,7 +74,6 @@ antigen-add() {
 antigen-remove() {
     list=("${(f)$(< $HOME/.zsh/bundles)}")
     list[$1]=()
-    echo "$list"
 
     [ -e $HOME/.zsh/bundles ] && rm -f $HOME/.zsh/bundles
     IFS=$'\n'; echo "${list[*]}" > $HOME/.zsh/bundles; IFS=$' \t\n'
