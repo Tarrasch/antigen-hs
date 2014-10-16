@@ -83,7 +83,7 @@ pluginNeedsCloning (Development _) = return True -- Since it's development
 -- | Clone the repository
 clonePlugin :: ZshPlugin -> Sh ()
 clonePlugin plugin@(GitRepository url) =
-  cmd "git" "clone" "--" url (pluginPath plugin)
+  cmd "git" "clone" "--recursive" "--" url (pluginPath plugin)
 clonePlugin plugin@(Development path) = do
   rm_rf (pluginPath plugin)
   cp_r path (pluginPath plugin)
