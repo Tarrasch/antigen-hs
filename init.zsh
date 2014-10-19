@@ -54,7 +54,6 @@ antigen-update() {
         echo "\nIn folder $folder"
         cd $folder && git pull origin master
     done
-    antigen-hs-compile
 }
 
 antigen-list() {
@@ -75,8 +74,8 @@ antigen-remove() {
     list=("${(f)$(< $HOME/.zsh/bundles)}")
     list[$1]=()
 
-    [ -e $HOME/.zsh/bundles ] && rm -f $HOME/.zsh/bundles
+    set +C
+    [ -e $HOME/.zsh/bundles ] && : > $HOME/.zsh/bundles
     IFS=$'\n'; echo "${list[*]}" > $HOME/.zsh/bundles; IFS=$' \t\n'
-
-    antigen-hs-compile
+    set -C
 }
