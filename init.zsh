@@ -21,7 +21,7 @@ antigen-create() {
     list=("${(f)$(< $HOME/.zsh/bundles)}")
     BUNDLES=$(IFS=','; echo "${list[*]}"; IFS=$' \t\n')
 
-    [ -e $HOME/.zsh/MyAntigen.hs ] && rm -f $HOME/.zsh/MyAntigen.hs
+    [ -e $HOME/.antigen-hs/MyAntigen.hs ] && rm -f $HOME/.antigen-hs/MyAntigen.hs
 
     HEADER='
 {-# LANGUAGE OverloadedStrings #-}
@@ -41,12 +41,12 @@ config = AntigenConfiguration bundles
 main :: IO ()
 main = shelly $ antigen config
 '
-    echo "$HEADER $BUNDLES $FOOTER" > $HOME/.zsh/MyAntigen.hs
+    echo "$HEADER $BUNDLES $FOOTER" > $HOME/.antigen-hs/MyAntigen.hs
 }
 
 antigen-hs-compile () {
     antigen-create
-    runghc -i"$HOME/.zsh/antigen-hs/" -- "$HOME/.zsh/MyAntigen.hs"
+    runghc -i"$HOME/.zsh/antigen-hs/" -- "$HOME/.antigen-hs/MyAntigen.hs"
 }
 
 antigen-update() {
