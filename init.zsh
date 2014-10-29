@@ -21,6 +21,8 @@ antigen-create() {
     list=("${(f)$(< $HOME/.zsh/bundles)}")
     BUNDLES=$(IFS=','; echo "${list[*]}"; IFS=$' \t\n')
 
+
+    [ -e $HOME/.antigen-hs ] || mkdir $HOME/.antigen-hs
     [ -e $HOME/.antigen-hs/MyAntigen.hs ] && rm -f $HOME/.antigen-hs/MyAntigen.hs
 
     HEADER='
