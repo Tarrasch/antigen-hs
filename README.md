@@ -86,6 +86,20 @@ repositories in `~/.antigen-hs/repos` manually yourself!
 [Shelly]: https://github.com/yesodweb/Shelly.hs
 [diff]: https://github.com/Tarrasch/dotfiles/commit/00c3b34c1e1e13d9b0f634611e5bdb5e42211b22
 
+## Configuration
+
+The following variables alter the behavior of antigen-hs, and must be set before
+sourcing init.zsh:
+
+    ANTIGEN_HS_HOME # This is only set automatically, and is set to the location
+                    # of the antigen-hs repository (which by default is
+                    # $HOME/.zsh/antigen-hs)
+    ANTIGEN_HS_OUT  # Output directory for cloned repositories and generated
+                    # scripts, defaults to $HOME/.antigen-hs.
+    ANTIGEN_HS_MY   # Your configuration file, defaults to
+                    # $ANTIGEN_HS_HOME/../MyAntigen.hs
+
+
 ## FAQ
 
 **Is Prezto or oh-my-zsh supported in some way?** No, if you load them they
