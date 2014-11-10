@@ -57,6 +57,11 @@ bundles =
   , bundle "Tarrasch/zsh-bd"
   , bundle "zsh-users/zsh-syntax-highlighting"
   , bundle "zsh-users/zsh-history-substring-search"
+  -- if you include a space, the second half is treated
+  -- as a path within the repository to use instead of
+  -- the repository root.  This must be a directory
+  -- with a .plugin.zsh file or file.
+  , bundle "robbyrussell/oh-my-zsh plugins/wd"
   -- Add your plugins here
   ]
 
