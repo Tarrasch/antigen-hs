@@ -10,6 +10,7 @@ import Shelly hiding (path)
 import qualified Data.Text as T
 import Data.Text (Text)
 import Data.Monoid
+import Control.Monad (forM)
 default (T.Text)
 
 -- | Configuration that contains what plugins you use
@@ -21,7 +22,8 @@ data AntigenConfiguration = AntigenConfiguration
 data ZshPlugin =
   ZshPlugin {
     storage :: RepoStorage,
-    sourcingStrategy :: SourcingStrategy
+    sourcingStrategy :: SourcingStrategy,
+    sourcingLocations :: [FilePath]
   }
 
 
@@ -60,7 +62,8 @@ outputFileToSource = outputDirectory </> "antigen-hs.zsh"
 bundle :: Text -> ZshPlugin
 bundle githubRepoIdentifier = ZshPlugin {
     storage = GitRepository $ "https://github.com/" <> githubRepoIdentifier,
-    sourcingStrategy = strictSourcingStrategy
+    sourcingStrategy = strictSourcingStrategy,
+    sourcingLocations = ["."]
   }
 
 
@@ -70,7 +73,8 @@ bundle githubRepoIdentifier = ZshPlugin {
 developFromFileSystem :: FilePath -> ZshPlugin
 developFromFileSystem filePath = ZshPlugin {
     storage = Development filePath,
-    sourcingStrategy = strictSourcingStrategy
+    sourcingStrategy = strictSourcingStrategy,
+    sourcingLocations = ["."]
   }
 
 
@@ -121,7 +125,9 @@ sampleConfig = AntigenConfiguration [samplePlugin]
 -- | Get files to source for a plugin
 findPluginZshs :: ZshPlugin -> Sh [FilePath]
 findPluginZshs plugin =
-  chdir (storagePath $ storage plugin) (sourcingStrategy plugin)
+  chdir (storagePath $ storage plugin) $ do
+    fmap concat $ forM (sourcingLocations plugin) $ \loc ->
+      chdir loc $ (sourcingStrategy plugin)
 
 -- | Match for one single *.plugin.zsh file
 strictSourcingStrategy :: SourcingStrategy

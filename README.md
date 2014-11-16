@@ -64,6 +64,14 @@ bundles =
   --
   -- , (bundle "some/stupid-plugin") { sourcingStrategy = antigenSourcingStrategy }
 
+  -- If you use a plugin that has sub-plugins. You can specify that as well
+  --
+  -- NOTE: If you want to use oh-my-zsh for real (please don't), you still need
+  -- to set the $ZSH env var manually.
+  -- , (bundle "robbyrussell/oh-my-zsh")
+  --    { sourcingLocations = [ "plugins/wd"
+  --                          , "plugins/colorize"] }
+
   -- vvv    Add your plugins here    vvv
   ]
 
