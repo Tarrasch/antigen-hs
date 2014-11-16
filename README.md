@@ -49,7 +49,8 @@ And paste this example content
 {-# LANGUAGE ExtendedDefaultRules #-}
 module MyAntigen where
 
-import Antigen (AntigenConfiguration (..), bundle, antigen)
+import Antigen (AntigenConfiguration (..), bundle, antigen,
+                ZshPlugin (..), antigenSourcingStrategy)
 import Shelly (shelly)
 
 bundles =
@@ -57,7 +58,13 @@ bundles =
   , bundle "Tarrasch/zsh-bd"
   , bundle "zsh-users/zsh-syntax-highlighting"
   , bundle "zsh-users/zsh-history-substring-search"
-  -- Add your plugins here
+
+  -- If you use a plugin that doesn't have a *.plugin.zsh file. You can set a
+  -- more liberal sourcing strategy.
+  --
+  -- , (bundle "some/stupid-plugin") { sourcingStrategy = antigenSourcingStrategy }
+
+  -- vvv    Add your plugins here    vvv
   ]
 
 config = AntigenConfiguration bundles
