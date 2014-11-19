@@ -49,8 +49,16 @@ And paste this example content
 {-# LANGUAGE ExtendedDefaultRules #-}
 module MyAntigen where
 
-import Antigen (AntigenConfiguration (..), bundle, antigen,
-                ZshPlugin (..), antigenSourcingStrategy)
+import Antigen (
+                -- Rudimentary imports
+                AntigenConfiguration (..)
+              , bundle
+              , antigen
+                -- If you want to source a bit trickier plugins
+              , ZshPlugin (..)
+              , antigenSourcingStrategy
+              , filePathsSourcingStrategy
+              )
 import Shelly (shelly)
 
 bundles =
@@ -71,6 +79,20 @@ bundles =
   -- , (bundle "robbyrussell/oh-my-zsh")
   --    { sourcingLocations = [ "plugins/wd"
   --                          , "plugins/colorize"] }
+
+  -- Sourcing a list of files
+  -- , (bundle "alfredodeza/zsh-plugins")
+  --    { sourcingStrategy = filePathsSourcingStrategy
+  --                          [ "vi/zle_vi_visual.zsh"
+  --                          , "pytest/pytest.plugin.zsh"
+  --                          ] }
+
+  -- Alternatively, this way will give you the same result
+  -- , (bundle "alfredodeza/zsh-plugins")
+  --    { sourcingStrategy = antigenSourcingStrategy
+  --    , sourcingLocations = [ "vi"
+  --                          , "pytest"
+  --                          ] }
 
   -- vvv    Add your plugins here    vvv
   ]
@@ -156,6 +178,6 @@ when it comes to choirs like updating the repositories (nuking the
 [language](https://github.com/Tarrasch/zsh-functional).
 
 **Why Haskell?** I love it, and I found the Shelly plugin to work extremely
-well for this kind of tasks. 
+well for this kind of tasks.
 
 [command-not-found]: https://github.com/Tarrasch/zsh-command-not-found

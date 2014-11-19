@@ -156,6 +156,13 @@ antigenSourcingStrategy = do
     (files:_) -> return files
     [] -> terror $ T.pack $ "No files to source among " ++ show files
 
+-- | Source all files in the given order. Currently does no file existence
+-- check or anything.
+filePathsSourcingStrategy :: [FilePath] -> SourcingStrategy
+filePathsSourcingStrategy paths = do
+  currDir <- pwd
+  return $ map (currDir </>) paths
+
 
 -- | endsWith ".txt" "hello.txt" ==> True
 endsWith :: Text -> Text -> Bool
