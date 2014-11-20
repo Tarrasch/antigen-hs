@@ -10,6 +10,7 @@ import Shelly hiding (path)
 import qualified Data.Text as T
 import Data.Text (Text)
 import Data.Monoid
+import Control.Monad (forM)
 default (T.Text)
 
 -- | Configuration that contains what plugins you use
@@ -19,11 +20,25 @@ data AntigenConfiguration = AntigenConfiguration
 
 -- | Data type representing a zsh plugin
 data ZshPlugin =
+  ZshPlugin {
+    storage :: RepoStorage,
+    sourcingStrategy :: SourcingStrategy,
+    sourcingLocations :: [FilePath]
+  }
+
+
+-- | Run this from repo directory, it should yield the files that must be
+-- sourced in order, left to right.
+type SourcingStrategy = Sh [FilePath]
+
+-- | Source reposi
+data RepoStorage =
     GitRepository { url :: !Text -- ^ Example: https://github.com/Tarrasch/zsh-functional
                   }
   | Development { filePath :: !FilePath -- ^ See 'developFromFileSystem'
                 }
   deriving (Show, Eq)
+
 
 
 -- | Root directory of where all generated files will be created
@@ -45,19 +60,27 @@ outputFileToSource = outputDirectory </> "antigen-hs.zsh"
 -- | Like `antigen bundle` from antigen. It assumes you want a github
 -- repository.
 bundle :: Text -> ZshPlugin
-bundle = GitRepository . ("https://github.com/" <>)
+bundle githubRepoIdentifier = ZshPlugin {
+    storage = GitRepository $ "https://github.com/" <> githubRepoIdentifier,
+    sourcingStrategy = strictSourcingStrategy,
+    sourcingLocations = ["."]
+  }
 
 
 -- | A local repository, useful when testing plugins
 --
 -- Example: developFromFileSystem "/home/arash/repos/zsh-snakebite-completion"
 developFromFileSystem :: FilePath -> ZshPlugin
-developFromFileSystem = Development
+developFromFileSystem filePath = ZshPlugin {
+    storage = Development filePath,
+    sourcingStrategy = strictSourcingStrategy,
+    sourcingLocations = ["."]
+  }
 
 
--- | Get the folder in which the plugin will be stored on disk
-pluginPath :: ZshPlugin -> FilePath
-pluginPath plugin = case plugin of
+-- | Get the folder in which the storage will be stored on disk
+storagePath :: RepoStorage -> FilePath
+storagePath storage = case storage of
     GitRepository url -> reposDirectory </> fromText (santitize url)
     Development path  -> reposDirectory </> fromText (santitize $ toTextIgnore path)
   where
@@ -68,25 +91,25 @@ pluginPath plugin = case plugin of
 
 
 -- | Clone the repository if it already doesn't exist
-ensurePlugin :: ZshPlugin -> Sh ()
-ensurePlugin plugin = do
-  needToClone <- pluginNeedsCloning plugin
-  when needToClone $ clonePlugin plugin
+ensurePlugin :: RepoStorage -> Sh ()
+ensurePlugin storage = do
+  needToClone <- pluginNeedsCloning storage
+  when needToClone $ clonePlugin storage
 
 
 -- | Yes if we need to clone the repository again
-pluginNeedsCloning :: ZshPlugin -> Sh Bool
-pluginNeedsCloning plugin@(GitRepository _) = fmap not $ test_d (pluginPath plugin)
+pluginNeedsCloning :: RepoStorage -> Sh Bool
+pluginNeedsCloning storage@(GitRepository _) = fmap not $ test_d (storagePath storage)
 pluginNeedsCloning (Development _) = return True -- Since it's development
 
 
 -- | Clone the repository
-clonePlugin :: ZshPlugin -> Sh ()
-clonePlugin plugin@(GitRepository url) =
-  cmd "git" "clone" "--recursive" "--" url (pluginPath plugin)
-clonePlugin plugin@(Development path) = do
-  rm_rf (pluginPath plugin)
-  cp_r path (pluginPath plugin)
+clonePlugin :: RepoStorage -> Sh ()
+clonePlugin storage@(GitRepository url) =
+  cmd "git" "clone" "--recursive" "--" url (storagePath storage)
+clonePlugin storage@(Development path) = do
+  rm_rf (storagePath storage)
+  cp_r path (storagePath storage)
 
 
 -- | (Used in my REPL development)
@@ -99,14 +122,46 @@ sampleConfig :: AntigenConfiguration
 sampleConfig = AntigenConfiguration [samplePlugin]
 
 
--- | Match for *.plugin.zsh file
-findPluginZsh :: ZshPlugin -> Sh FilePath
-findPluginZsh plugin = do
-  files <- ls (pluginPath plugin)
-  case filter (endsWith ".plugin.zsh" . toTextIgnore) files of
-    [file] -> return file
-    [] -> terror "No *.plugin.zsh file!"
-    _  -> terror "Too many *.plugin.zsh files!"
+-- | Get files to source for a plugin
+findPluginZshs :: ZshPlugin -> Sh [FilePath]
+findPluginZshs plugin =
+  chdir (storagePath $ storage plugin) $ do
+    fmap concat $ forM (sourcingLocations plugin) $ \loc ->
+      chdir loc $ (sourcingStrategy plugin)
+
+-- | Match for one single *.plugin.zsh file
+strictSourcingStrategy :: SourcingStrategy
+strictSourcingStrategy = do
+    files <- pwd >>= ls
+    case filter (endsWith ".plugin.zsh" . toTextIgnore) files of
+      [file] -> return [file]
+      [] -> terror $ "No *.plugin.zsh file! \
+                     \See antigenSourcingStrategy example in README \
+                     \on how to configure this"
+      _  -> terror $ "Too many *.plugin.zsh files!"
+
+
+-- | Find what to source, using the strategy described here:
+--
+-- As the author of antigen-hs doesn't like this method, it's not the default
+--
+-- https://github.com/zsh-users/antigen#notes-on-writing-plugins
+antigenSourcingStrategy :: SourcingStrategy
+antigenSourcingStrategy = do
+  files <- pwd >>= ls
+  let candidatePatterns = [".plugin.zsh", "init.zsh", ".zsh", ".sh"]
+  let sfilt pat = filter (endsWith pat . toTextIgnore) files
+  let filteredResults =  map sfilt candidatePatterns
+  case [res | res <- filteredResults, not (null res)]  of
+    (files:_) -> return files
+    [] -> terror $ T.pack $ "No files to source among " ++ show files
+
+-- | Source all files in the given order. Currently does no file existence
+-- check or anything.
+filePathsSourcingStrategy :: [FilePath] -> SourcingStrategy
+filePathsSourcingStrategy paths = do
+  currDir <- pwd
+  return $ map (currDir </>) paths
 
 
 -- | endsWith ".txt" "hello.txt" ==> True
@@ -117,10 +172,10 @@ endsWith needle haystack =
 
 isDevelopment :: AntigenConfiguration -> Bool
 isDevelopment (AntigenConfiguration {..}) =
-    any isDev plugins
+    any (isDev . storage) plugins
   where
     isDev (Development _) = True
-    isDev _               = False
+    isDev _                  = False
 
 -- | Get the content that will be put in the file to source.
 --
@@ -131,7 +186,7 @@ fileToSourceContent ::
      -> Sh Text -- ^ What the file should contain
 fileToSourceContent config@(AntigenConfiguration {..}) pluginZshs = do
     pluginZshsAbs <- mapM absPath pluginZshs
-    repoDirectories <- mapM (absPath . pluginPath) plugins
+    repoDirectories <- mapM (absPath . storagePath) (map storage plugins)
     return $ T.unlines $
       [ "# THIS FILE IS GENERATED BY antigen-hs!!!!\n"
       , T.unlines $ map (("source " <>) . toTextIgnore) pluginZshsAbs
@@ -157,7 +212,7 @@ inHomeDir sh = do
 antigen :: AntigenConfiguration -> Sh ()
 antigen config@(AntigenConfiguration {..}) = inHomeDir $ do
     mkdir_p reposDirectory
-    mapM_ ensurePlugin plugins
-    pluginZshs <- mapM findPluginZsh plugins
+    mapM_ ensurePlugin (map storage plugins)
+    pluginZshs <- fmap concat $ mapM findPluginZshs plugins
     contents <- fileToSourceContent config pluginZshs
     writefile outputFileToSource contents
