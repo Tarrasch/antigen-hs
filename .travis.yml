@@ -1,0 +1,9 @@
+language: haskell
+ghc:
+  - 7.8
+install:
+  - "sudo apt-get install zsh"
+  - "cabal install shelly"
+  - "sudo apt-get install python-pip"
+  - "sudo pip install cram"
+script: "make test"
