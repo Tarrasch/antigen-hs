@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Tarrasch/antigen-hs.svg?branch=master)](https://travis-ci.org/Tarrasch/antigen-hs)
+
 # antigen-hs
 
 A replacement for [antigen] which has a low overhead when starting up the
