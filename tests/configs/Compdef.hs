@@ -6,11 +6,13 @@ import Antigen
 import Shelly (shelly)
 
 bundles =
-  [ developFromFileSystem "/tmp/antigen-hs/tests/repos/compdef"
+  [ (developFromFileSystem "/tmp/antigen-hs/tests/repos/compdef") {
+      sourcingStrategy = antigenSourcingStrategy
+    }
+
   ]
 
 config = AntigenConfiguration bundles
 
 main :: IO ()
 main = shelly $ antigen config
-
