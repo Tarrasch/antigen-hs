@@ -60,13 +60,20 @@ outputFileToSource :: Sh FilePath
 outputFileToSource = outputDirectory <$/> "antigen-hs.zsh"
 
 
+-- | default ZshPlugin
+defZshPlugin :: ZshPlugin
+defZshPlugin = ZshPlugin {
+    storage = error "set storage please!",
+    sourcingStrategy = strictSourcingStrategy,
+    sourcingLocations = ["."]
+  }
+
+
 -- | Like `antigen bundle` from antigen. It assumes you want a github
 -- repository.
 bundle :: Text -> ZshPlugin
-bundle githubRepoIdentifier = ZshPlugin {
-    storage = GitRepository $ "https://github.com/" <> githubRepoIdentifier,
-    sourcingStrategy = strictSourcingStrategy,
-    sourcingLocations = ["."]
+bundle githubRepoIdentifier = defZshPlugin {
+    storage = GitRepository $ "https://github.com/" <> githubRepoIdentifier
   }
 
 
@@ -74,10 +81,8 @@ bundle githubRepoIdentifier = ZshPlugin {
 --
 -- Example: developFromFileSystem "/home/arash/repos/zsh-snakebite-completion"
 developFromFileSystem :: FilePath -> ZshPlugin
-developFromFileSystem filePath = ZshPlugin {
-    storage = Development filePath,
-    sourcingStrategy = strictSourcingStrategy,
-    sourcingLocations = ["."]
+developFromFileSystem filePath = defZshPlugin {
+    storage = Development filePath
   }
 
 
