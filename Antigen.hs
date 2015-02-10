@@ -153,8 +153,6 @@ strictSourcingStrategy = do
 
 -- | Find what to source, using the strategy described here:
 --
--- As the author of antigen-hs doesn't like this method, it's not the default
---
 -- https://github.com/zsh-users/antigen#notes-on-writing-plugins
 antigenSourcingStrategy :: SourcingStrategy
 antigenSourcingStrategy = do
