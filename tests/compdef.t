@@ -1,8 +1,8 @@
-A test to see if we register #compdef marks
+A test to see if we register #compdef marks (setting the fpath)
 
-  $ compile-and-source "$TESTDIR/configs/Compdef.hs"
+  $ compile-and-source "$TESTDIR/configs/Compdef.hs" >& /dev/null
   $ [[ -f "$ANTIGEN_HS_OUT/antigen-hs.zsh" ]] || (echo 'File not created! :(' && exit 1)
   $ echo $set_some_var
   123
-  $ echo $fpath
-  yay
+  $ echo $fpath[-1]
+  /tmp/cramtests-??????/compdef.t/antigen-hs-out/repos/-SLASH-tmp-SLASH-antigen-hs-SLASH-tests-SLASH-repos-SLASH-compdef/etc (glob)
