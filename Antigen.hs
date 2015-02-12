@@ -42,6 +42,7 @@ data RepoStorage =
 
 
 
+(<$/>) :: Sh FilePath -> FilePath -> Sh FilePath
 shPath <$/> path = (</> path) <$> shPath
 
 -- | Root directory of where all generated files will be created
@@ -147,8 +148,6 @@ strictSourcingStrategy = do
 
 -- | Find what to source, using the strategy described here:
 --
--- As the author of antigen-hs doesn't like this method, it's not the default
---
 -- https://github.com/zsh-users/antigen#notes-on-writing-plugins
 antigenSourcingStrategy :: SourcingStrategy
 antigenSourcingStrategy = do
@@ -157,7 +156,7 @@ antigenSourcingStrategy = do
   let sfilt pat = filter (endsWith pat . toTextIgnore) files
   let filteredResults =  map sfilt candidatePatterns
   case [res | res <- filteredResults, not (null res)]  of
-    (files:_) -> return files
+    (matchedFiles:_) -> return matchedFiles
     [] -> terror $ T.pack $ "No files to source among " ++ show files
 
 -- | Source all files in the given order. Currently does no file existence
