@@ -133,6 +133,8 @@ sourcing init.zsh:
     ANTIGEN_HS_HOME # This is only set automatically, and is set to the location
                     # of the antigen-hs repository (which by default is
                     # $HOME/.zsh/antigen-hs)
+    ANTIGEN_HS_OUT  # Output directory for cloned repositories and generated
+                    # scripts, defaults to $HOME/.antigen-hs.
     ANTIGEN_HS_MY   # Your configuration file, defaults to
                     # $ANTIGEN_HS_HOME/../MyAntigen.hs
 
