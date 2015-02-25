@@ -148,7 +148,6 @@ the individual plugins through a plugin manager like antigen or antigen-hs.
 If there's anything inside those plugins that you want, just create a seperate
 repository for it [like I did][command-not-found].
 
-
 **Why do I get `No *.plugin.zsh file` error?** Because all zsh plugins
 should have that file. I want to enforce it so that people start following this convention.
 The easiest way is to just
@@ -172,10 +171,12 @@ when it comes to choirs like updating the repositories (nuking the
 
 **Can I only source GitHub repositories?** At the moment yes, patches are very welcome! :)
 
+**Where are some more plugins?** [awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins)
+is a list of zsh plugins that you may find helpful.
+
 **Why not write it in pure zsh?**
 [Trust](https://github.com/Tarrasch/zsh-bd)
-[me](https://github.com/Tarrasch/zsh-autoenv)
-, [it](https://github.com/Tarrasch/zsh-mcd)
+[me](https://github.com/Tarrasch/zsh-autoenv), [it](https://github.com/Tarrasch/zsh-mcd)
 [is](https://github.com/Tarrasch/zsh-colors)
 [a](https://github.com/Tarrasch/zsh-i-know)
 [horrible](https://github.com/Tarrasch/zsh-command-not-found)
