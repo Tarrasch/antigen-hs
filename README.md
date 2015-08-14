@@ -1,5 +1,13 @@
 [![Build Status](https://travis-ci.org/Tarrasch/antigen-hs.svg?branch=master)](https://travis-ci.org/Tarrasch/antigen-hs)
 
+Once a zsh user realizes that [oh-my-zsh] and [antigen] actually is bloatware,
+they will rejoice in antigen-hs. Here's a quote from one content user.
+
+>  Great work on antigen-hs, you just saved me more than a second *each time* I
+>  split a tmux pane. Probably a month or two in some longer timespan. Never
+>  thought about how much time oh-my-zsh took to run its stuff.
+>   - [Mariano Casco](https://github.com/mdsn)
+
 # antigen-hs
 
 A replacement for [antigen] which has a low overhead when starting up the
@@ -122,6 +130,7 @@ with computers to use a zsh plugin manager, you can delete and manage the
 repositories in `~/.antigen-hs/repos` manually yourself!
 
 [antigen]: https://github.com/zsh-users/antigen
+[oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh
 [Shelly]: https://github.com/yesodweb/Shelly.hs
 [diff]: https://github.com/Tarrasch/dotfiles/commit/00c3b34c1e1e13d9b0f634611e5bdb5e42211b22
 
