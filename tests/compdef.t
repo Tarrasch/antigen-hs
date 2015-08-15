@@ -5,4 +5,4 @@ A test to see if we register #compdef marks (setting the fpath)
   $ echo $set_some_var
   123
   $ echo $fpath[-1]
-  /tmp/cramtests-??????/compdef.t/antigen-hs-out/repos/-SLASH-tmp-SLASH-antigen-hs-SLASH-tests-SLASH-repos-SLASH-compdef/etc (glob)
+  /tmp/antigen-hs/tests/repos/compdef/etc

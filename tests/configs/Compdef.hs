@@ -2,7 +2,6 @@
 module Compdef where
 
 import Antigen
-import Shelly (shelly)
 
 bundles =
   [ (local "/tmp/antigen-hs/tests/repos/compdef") {
@@ -11,7 +10,7 @@ bundles =
     }
   ]
 
-config = AntigenConfiguration bundles
+config = defaultConfig { plugins = bundles }
 
 main :: IO ()
-main = shelly $ antigen config
+main = antigen config

@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP               #-}
 {-# LANGUAGE NamedFieldPuns    #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Antigen
@@ -17,6 +18,11 @@ module Antigen
     , antigenSourcingStrategy
     , filePathsSourcingStrategy
     ) where
+
+
+#if __GLASGOW_HASKELL__ < 709
+import Control.Applicative
+#endif
 
 import Control.Exception  (bracket_)
 import Control.Monad
