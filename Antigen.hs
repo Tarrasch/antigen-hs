@@ -278,7 +278,7 @@ antigen :: AntigenConfig -> IO ()
 antigen config'@AntigenConfig{plugins} = inHomeDir $ do
     hsOut <- lookupEnv "ANTIGEN_HS_OUT"
     let config = config'
-            { outputDirectory = fromMaybe (outputDirectory config) hsOut }
+            { outputDirectory = fromMaybe (outputDirectory config') hsOut }
 
     createDirectoryIfMissing True (reposDirectory config)
     mapM_ (ensurePlugin config . storage) plugins
