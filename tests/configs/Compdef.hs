@@ -5,7 +5,7 @@ import Antigen
 import Shelly (shelly)
 
 bundles =
-  [ (developFromFileSystem "/tmp/antigen-hs/tests/repos/compdef") {
+  [ (local "/tmp/antigen-hs/tests/repos/compdef") {
       sourcingStrategy = antigenSourcingStrategy,
       fpathLocations = ["etc"]
     }
