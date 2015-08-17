@@ -56,12 +56,11 @@ And paste this example content
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ExtendedDefaultRules #-}
 module MyAntigen where
 
 import Antigen (
                 -- Rudimentary imports
-                AntigenConfiguration (..)
+                AntigenConfig (..)
               , bundle
               , antigen
                 -- If you want to source a bit trickier plugins
@@ -69,7 +68,6 @@ import Antigen (
               , antigenSourcingStrategy
               , filePathsSourcingStrategy
               )
-import Shelly (shelly)
 
 bundles =
   [ bundle "Tarrasch/zsh-functional"
@@ -107,10 +105,10 @@ bundles =
   -- vvv    Add your plugins here    vvv
   ]
 
-config = AntigenConfiguration bundles
+config = defaultConfig { plugins = bundles }
 
 main :: IO ()
-main = shelly $ antigen config
+main = antigen config
 ```
 
 Now edit this file accordingly by adding your own plugins. Then you're done!

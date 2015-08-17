@@ -7,4 +7,4 @@ A small test of the main functionality
   $ ls
   c
   $ echo $fpath[-1]
-  /tmp/cramtests-??????/basic.t/antigen-hs-out/repos/https-COLON--SLASH--SLASH-github.com-SLASH-Tarrasch-SLASH-zsh-mcd/ (glob)
+  /tmp/cramtests-??????/basic.t/antigen-hs-out/repos/https-COLON--SLASH--SLASH-github.com-SLASH-Tarrasch-SLASH-zsh-mcd (glob)

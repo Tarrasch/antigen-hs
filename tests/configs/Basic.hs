@@ -2,14 +2,13 @@
 module Basic where
 
 import Antigen
-import Shelly (shelly)
 
 bundles =
   [ bundle "Tarrasch/zsh-bd"
   , bundle "Tarrasch/zsh-mcd"
   ]
 
-config = AntigenConfiguration bundles
+config = defaultConfig { plugins = bundles }
 
 main :: IO ()
-main = shelly $ antigen config
+main = antigen config
