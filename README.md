@@ -32,11 +32,6 @@ Since this plugin is written in Haskell, you have to download it:
 
     sudo apt-get install ghc cabal-install
 
-The code also depends on the [Shelly] Haskell library:
-
-    cabal update
-    cabal install shelly
-
 ### Clone and source
 
 This plugin assumes that you put it in `~/.zsh/antigen-hs/`:
@@ -129,7 +124,6 @@ repositories in `~/.antigen-hs/repos` manually yourself!
 
 [antigen]: https://github.com/zsh-users/antigen
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh
-[Shelly]: https://github.com/yesodweb/Shelly.hs
 [diff]: https://github.com/Tarrasch/dotfiles/commit/00c3b34c1e1e13d9b0f634611e5bdb5e42211b22
 
 ## Configuration
@@ -189,7 +183,6 @@ is a list of zsh plugins that you may find helpful.
 [horrible](https://github.com/Tarrasch/zsh-command-not-found)
 [language](https://github.com/Tarrasch/zsh-functional).
 
-**Why Haskell?** I love it, and I found the Shelly plugin to work extremely
-well for this kind of tasks.
+**Why Haskell?** I love it.
 
 [command-not-found]: https://github.com/Tarrasch/zsh-command-not-found
