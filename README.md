@@ -56,6 +56,7 @@ module MyAntigen where
 import Antigen (
                 -- Rudimentary imports
                 AntigenConfig (..)
+              , defaultConfig
               , bundle
               , antigen
                 -- If you want to source a bit trickier plugins
