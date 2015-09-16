@@ -7,8 +7,12 @@ if [[ -z "$ANTIGEN_HS_MY" ]]; then
     ANTIGEN_HS_MY="$ANTIGEN_HS_HOME/../MyAntigen.hs"
 fi
 
+antigen-hs-init () {
+  cd "$ANTIGEN_HS_HOME" && stack build
+}
+
 antigen-hs-compile () {
-  runghc -i"$ANTIGEN_HS_HOME/" -- "$ANTIGEN_HS_MY"
+  stack exec -- runghc -i"$ANTIGEN_HS_HOME/" -- "$ANTIGEN_HS_MY"
 }
 
 () {
