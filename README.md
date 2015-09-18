@@ -33,6 +33,9 @@ Since this plugin is written in Haskell, you have to download it:
 - installation through `cabal`:
 
         $ sudo apt-get install ghc cabal-install
+
+  And if you won't use `cabal sandbox`:
+
         $ caball update
         $ caball install base text directory filepath process
 
@@ -119,10 +122,12 @@ Finally, source it from you zshrc:
 
     $ echo 'source ~/.zsh/antigen-hs/init.zsh' | tee -a ~/.zshrc | env zsh
 
-And agree to setup and recompile your configuration:
+And let withard to help you setup and recompile your configuration:
 
     Didn't find file ~/.antigen-hs/antigen-hs.zsh
-    Try to run antigen-hs-compile? [Y/n] Yes
+    Try to setup? [Y/n] Yes
+    Use sandbox for haskell dependencies? [Y/n] Yes
+    Stack executable found. Use it for sandbox? [Y/n] Yes
 
 ## Usage
 
@@ -198,7 +203,7 @@ is a list of zsh plugins that you may find helpful.
 
 **Why Haskell?** I love it.
 
-**Is it use sandbox for haskell dependencies?**
-Yes, it automatically use `stack` if available.
+**Do it use sandbox for haskell dependencies?**
+Yes, it support installation by `stack` or in `cabal sandbox` as an option.
 
 [command-not-found]: https://github.com/Tarrasch/zsh-command-not-found

@@ -11,9 +11,94 @@ if [[ -z "$ANTIGEN_HS_MY" ]] ; then
   ANTIGEN_HS_MY="$ANTIGEN_HS_HOME/../MyAntigen.hs"
 fi
 
+ANTIGEN_HS_SANDBOX_STACK="stack"
+ANTIGEN_HS_SANDBOX_CABAL="cabal"
+ANTIGEN_HS_SANDBOX_EMPTY="empty"
+
+# usage: antigen-hs-ask "question" action
+# or     antigen-hs-ask "question" action1 action2
+antigen-hs-ask () {
+  while true; do
+    read -sk 1 "RESPONSE?$fg[green]$1 $fg_bold[green][Y/n] "$reset_color
+
+    case $RESPONSE in
+      [yY] | $'\n' ) echo $fg[yellow]'Yes'$reset_color
+                     eval $2
+                     break
+                     ;;
+      [nN] ) echo $fg[blue]'No'$reset_color
+             if [[ $# == 3 ]]; then
+               eval $3
+             fi
+             break
+             ;;
+      * ) echo $fg[red]$RESPONSE$reset_color
+          echo $fg[red]"Please answer yes or no."$reset_color
+          ;;
+    esac
+  done
+}
+
 antigen-hs-sandbox () {
-  cd "$ANTIGEN_HS_HOME" && stack setup && stack build
-  cd $OLDPWD
+  ANTIGEN_HS_SANDBOX=$1
+
+  if [[ ! -d "$ANTIGEN_HS_HOME"/$2 ]] ; then
+    cd "$ANTIGEN_HS_HOME" && eval "${@:3}" 2>&1
+    local ANTIGEN_HS_SANDBOX_RESULT=$?
+    cd $OLDPWD
+  fi
+  return $ANTIGEN_HS_SANDBOX_RESULT
+}
+
+antigen-hs-sandbox-stack () {
+  antigen-hs-sandbox $ANTIGEN_HS_SANDBOX_STACK .stack-work "stack setup && stack build"
+}
+
+antigen-hs-sandbox-cabal () {
+  antigen-hs-sandbox $ANTIGEN_HS_SANDBOX_CABAL .cabal-sandbox "cabal sandbox init && antigen-hs-cabal"
+}
+
+antigen-hs-sandbox-cabal-check () {
+  if (( $+commands[cabal] )) ; then
+    echo $fg[green]"Cabal executable found and will be used."$reset_color
+    antigen-hs-sandbox-cabal
+  else
+    echo $fg[red]'Executable for cabal not found. Install it or check your $PATH. Skip setup.'$reset_color
+    return 1
+  fi
+}
+
+antigen-hs-cabal () {
+  cabal update
+  cabal install --only-dependencies
+}
+
+antigen-hs-cabal-global () {
+  ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_EMPTY
+  antigen-hs-cabal
+}
+
+antigen-hs-init-sandbox () {
+  if (( $+commands[stack] )) ; then
+    antigen-hs-ask "Stack executable found. Use it for sandbox?" antigen-hs-sandbox-stack antigen-hs-sandbox-cabal-check
+  else
+    antigen-hs-sandbox-cabal-check
+  fi
+}
+
+antigen-hs-repeat () {
+  if ! eval $1 ; then
+    antigen-hs-ask "$2 finish without success. Would you like try again?" "$0 $*"
+  fi
+}
+
+antigen-hs-init () {
+  antigen-hs-ask "Use sandbox for haskell dependencies?" antigen-hs-init-sandbox antigen-hs-cabal-global
+}
+
+antigen-hs-setup () {
+  antigen-hs-repeat antigen-hs-init "Setup"
+  antigen-hs-repeat antigen-hs-compile "Compilation"
 }
 
 antigen-hs-source () {
@@ -22,42 +107,72 @@ antigen-hs-source () {
   if [[ -f $FILE_TO_SOURCE ]] ; then
     source $FILE_TO_SOURCE
   else
-    echo "Didn't find file $FILE_TO_SOURCE"
+    echo $fg[red]"Didn't find file $FILE_TO_SOURCE"$reset_color
     return 1
   fi
 }
 
-antigen-hs-compile () {
-  local ANTIGEN_COMPILE_CMD='runghc -i"$ANTIGEN_HS_HOME/" -- "$ANTIGEN_HS_MY"'
+antigen-hs-init-source () {
+  antigen-hs-source
+  local ANTIGEN_HS_SOURCE_RESULT=$?
 
-  if (( $+commands[stack] )) ; then
-      local STACK_YAML="$ANTIGEN_HS_HOME"/stack.yaml
-      local ANTIGEN_COMPILE_CMD="stack exec -- "$ANTIGEN_COMPILE_CMD
+  if [[ "$ANTIGEN_HS_SOURCE_RESULT" == 0 ]] ; then
+    if [[ -z $ANTIGEN_HS_SANDBOX ]]; then
 
-    if [[ ! -d "$ANTIGEN_HS_HOME"/.stack-work ]] ; then
-      antigen-hs-sandbox
+      if [[ -d "$ANTIGEN_HS_HOME"/.stack-work ]] ; then
+        ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_STACK
+      elif [[ -d "$ANTIGEN_HS_HOME"/.cabal-sandbox ]] ; then
+        ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_CABAL
+      else
+        ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_EMPTY
+      fi
+
     fi
   else
-    unfunction antigen-hs-sandbox
+    return "$ANTIGEN_HS_SOURCE_RESULT"
   fi
-  eval "$ANTIGEN_COMPILE_CMD"
-  antigen-hs-source
+}
+
+antigen-hs-compile () {
+  local ANTIGEN_HS_COMPILE_CMD='runghc -i"$ANTIGEN_HS_HOME/" -- "$ANTIGEN_HS_MY"'
+
+  case $ANTIGEN_HS_SANDBOX in
+    $ANTIGEN_HS_SANDBOX_STACK )
+      local ANTIGEN_HS_COMPILE_CMD='STACK_YAML="$ANTIGEN_HS_HOME"/stack.yaml stack exec -- '"$ANTIGEN_HS_COMPILE_CMD"
+      unfunction antigen-hs-sandbox-cabal-check 2>/dev/null
+      unfunction antigen-hs-sandbox-cabal 2>/dev/null
+      unfunction antigen-hs-cabal 2>/dev/null
+      ;;
+    $ANTIGEN_HS_SANDBOX_CABAL )
+      local ANTIGEN_HS_COMPILE_CMD='CABAL_SANDBOX_CONFIG="$ANTIGEN_HS_HOME"/cabal.sandbox.config cabal exec -- '"$ANTIGEN_HS_COMPILE_CMD"
+      unfunction antigen-hs-sandbox-stack 2>/dev/null
+      ;;
+    * )
+      unfunction antigen-hs-sandbox-cabal-check 2>/dev/null
+      unfunction antigen-hs-sandbox-cabal 2>/dev/null
+      unfunction antigen-hs-sandbox-stack 2>/dev/null
+      unfunction antigen-hs-sandbox 2>/dev/null
+      ;;
+  esac
+  eval "$ANTIGEN_HS_COMPILE_CMD"
+  local ANTIGEN_HS_COMPILE_RESULT=$?
+
+  if [[ "$ANTIGEN_HS_COMPILE_RESULT" == 0 ]] ; then
+    antigen-hs-source
+  else
+    return "$ANTIGEN_HS_COMPILE_RESULT"
+  fi
 }
 
 () {
-  if ! antigen-hs-source ; then
-
-    while true; do
-      read -sk 1 "response?Try to run antigen-hs-compile? [Y/n] "
-
-      case $response in
-        [yY] | $'\n' ) echo 'Yes' ; antigen-hs-compile ; break
-                       ;;
-        [nN] ) echo 'No' ; break
-               ;;
-        * ) echo $response ; echo "Please answer yes or no."
-            ;;
-      esac
-    done
+  autoload -U colors && colors
+  if ! antigen-hs-init-source ; then
+    antigen-hs-ask "Try to setup?" antigen-hs-setup
   fi
+  unfunction antigen-hs-init-source
+  unfunction antigen-hs-setup
+  unfunction antigen-hs-repeat
+  unfunction antigen-hs-init
+  unfunction antigen-hs-cabal-global
+  unfunction antigen-hs-init-sandbox
 }
