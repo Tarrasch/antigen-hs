@@ -1,4 +1,3 @@
-#!/usr/bin/env zsh
 # See https://github.com/Tarrasch/antigen-hs#readme
 
 ANTIGEN_HS_HOME=${${0:A}:h}
@@ -11,15 +10,18 @@ if [[ -z "$ANTIGEN_HS_MY" ]] ; then
   ANTIGEN_HS_MY="$ANTIGEN_HS_HOME/../MyAntigen.hs"
 fi
 
-ANTIGEN_HS_SANDBOX_STACK="stack"
-ANTIGEN_HS_SANDBOX_CABAL="cabal"
-ANTIGEN_HS_SANDBOX_EMPTY="empty"
-
 # usage: antigen-hs-ask "question" action
 # or     antigen-hs-ask "question" action1 action2
 antigen-hs-ask () {
   while true; do
-    read -sk 1 "RESPONSE?$fg[green]$1 $fg_bold[green][Y/n] "$reset_color
+    local REQUEST="read"
+
+    if ! [[ -t 0 ]]; then
+      REQUEST=$REQUEST" -u 0"
+    fi
+    REQUEST=$REQUEST' -sk 1 "RESPONSE?$fg[green]$1 $fg_bold[green][Y/n] "$reset_color'
+
+    local RESPONSE=$(eval $REQUEST ; echo $RESPONSE)
 
     case $RESPONSE in
       [yY] | $'\n' ) echo $fg[yellow]'Yes'$reset_color
@@ -47,15 +49,15 @@ antigen-hs-sandbox () {
     local ANTIGEN_HS_SANDBOX_RESULT=$?
     cd $OLDPWD
   fi
-  return $ANTIGEN_HS_SANDBOX_RESULT
+  return "$ANTIGEN_HS_SANDBOX_RESULT"
 }
 
 antigen-hs-sandbox-stack () {
-  antigen-hs-sandbox $ANTIGEN_HS_SANDBOX_STACK .stack-work "stack setup && stack build"
+  antigen-hs-sandbox "stack" .stack-work "stack setup && stack build"
 }
 
 antigen-hs-sandbox-cabal () {
-  antigen-hs-sandbox $ANTIGEN_HS_SANDBOX_CABAL .cabal-sandbox "cabal sandbox init && antigen-hs-cabal"
+  antigen-hs-sandbox "cabal" .cabal-sandbox "cabal sandbox init && antigen-hs-cabal"
 }
 
 antigen-hs-sandbox-cabal-check () {
@@ -74,7 +76,7 @@ antigen-hs-cabal () {
 }
 
 antigen-hs-cabal-global () {
-  ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_EMPTY
+  ANTIGEN_HS_SANDBOX="empty"
   antigen-hs-cabal
 }
 
@@ -120,11 +122,11 @@ antigen-hs-init-source () {
     if [[ -z $ANTIGEN_HS_SANDBOX ]]; then
 
       if [[ -d "$ANTIGEN_HS_HOME"/.stack-work ]] ; then
-        ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_STACK
+        ANTIGEN_HS_SANDBOX="stack"
       elif [[ -d "$ANTIGEN_HS_HOME"/.cabal-sandbox ]] ; then
-        ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_CABAL
+        ANTIGEN_HS_SANDBOX="cabal"
       else
-        ANTIGEN_HS_SANDBOX=$ANTIGEN_HS_SANDBOX_EMPTY
+        ANTIGEN_HS_SANDBOX="empty"
       fi
 
     fi
@@ -137,13 +139,13 @@ antigen-hs-compile () {
   local ANTIGEN_HS_COMPILE_CMD='runghc -i"$ANTIGEN_HS_HOME/" -- "$ANTIGEN_HS_MY"'
 
   case $ANTIGEN_HS_SANDBOX in
-    $ANTIGEN_HS_SANDBOX_STACK )
+    "stack" )
       local ANTIGEN_HS_COMPILE_CMD='STACK_YAML="$ANTIGEN_HS_HOME"/stack.yaml stack exec -- '"$ANTIGEN_HS_COMPILE_CMD"
       unfunction antigen-hs-sandbox-cabal-check 2>/dev/null
       unfunction antigen-hs-sandbox-cabal 2>/dev/null
       unfunction antigen-hs-cabal 2>/dev/null
       ;;
-    $ANTIGEN_HS_SANDBOX_CABAL )
+    "cabal" )
       local ANTIGEN_HS_COMPILE_CMD='CABAL_SANDBOX_CONFIG="$ANTIGEN_HS_HOME"/cabal.sandbox.config cabal exec -- '"$ANTIGEN_HS_COMPILE_CMD"
       unfunction antigen-hs-sandbox-stack 2>/dev/null
       ;;
