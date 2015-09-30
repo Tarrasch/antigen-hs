@@ -5,11 +5,10 @@ export ANTIGEN_HS_OUT="$PWD/antigen-hs-out"
 rm -rf /tmp/antigen-hs/tests/
 mkdir -p /tmp/antigen-hs/tests/
 cp -r -t /tmp/antigen-hs/tests/ $TESTDIR/repos
-source "$TESTDIR/../init.zsh" > /dev/null
 
 # First time we source to define antigen-hs-compile
 # We pipe to /dev/null to mute the advice being echoed
-source "$TESTDIR/../init.zsh" > /dev/null
+yes N | source "$TESTDIR/../init.zsh" > /dev/null
 
 compile-and-source () {
   rm -f $ANTIGEN_HS_OUT/antigen-hs.zsh

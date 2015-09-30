@@ -30,22 +30,29 @@ my dotfiles repository where I replace antigen with antigen-hs.
 
 Since this plugin is written in Haskell, you have to download it:
 
-    sudo apt-get install ghc cabal-install
+- installation through `cabal`:
+
+        $ sudo apt-get install ghc cabal-install
+
+  And if you won't use `cabal sandbox`:
+
+        $ caball update
+        $ caball install base text directory filepath process
+
+- installation through `stack`:
+
+  Follow [Stack installation guide](https://github.com/commercialhaskell/stack/wiki/Downloads).
 
 ### Clone and source
 
 This plugin assumes that you put it in `~/.zsh/antigen-hs/`:
 
-    git clone . ~/.zsh/antigen-hs/
-
-Then source it from you zshrc:
-
-    echo 'source ~/.zsh/antigen-hs/init.zsh' >> ~/.zshrc
+    git clone https://github.com/Tarrasch/antigen-hs.git ~/.zsh/antigen-hs/
 
 ### Create plugins file
 
     touch ~/.zsh/MyAntigen.hs
-    vim ~/.zsh/MyAntigen.hs
+    $EDITOR ~/.zsh/MyAntigen.hs
 
 And paste this example content
 
@@ -111,9 +118,19 @@ Now edit this file accordingly by adding your own plugins. Then you're done!
 You can get some inspiration from the author's
 [~/.zsh/MyAntigen.hs](https://github.com/Tarrasch/dotfiles/blob/master/zsh/MyAntigen.hs).
 
+Finally, source it from you zshrc:
+
+    $ echo 'source ~/.zsh/antigen-hs/init.zsh' | tee -a ~/.zshrc | env zsh
+
+And let withard to help you setup and recompile your configuration:
+
+    Didn't find file ~/.antigen-hs/antigen-hs.zsh
+    Try to setup? [Y/n] Yes
+    Use sandbox for haskell dependencies? [Y/n] Yes
+    Stack executable found. Use it for sandbox? [Y/n] Yes
+
 ## Usage
 
-Reload your shell, execute `antigen-hs-compile` and reload zsh once more.
 Each time you update `MyAntigen.hs` you have to run `antigen-hs-compile`
 
 ## Limitations
@@ -185,5 +202,8 @@ is a list of zsh plugins that you may find helpful.
 [language](https://github.com/Tarrasch/zsh-functional).
 
 **Why Haskell?** I love it.
+
+**Do it use sandbox for haskell dependencies?**
+Yes, it support installation by `stack` or in `cabal sandbox` as an option.
 
 [command-not-found]: https://github.com/Tarrasch/zsh-command-not-found
