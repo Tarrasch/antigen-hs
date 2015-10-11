@@ -193,6 +193,9 @@ when it comes to choirs like updating the repositories (nuking the
 **Where are some more plugins?** [awesome-zsh-plugins](https://github.com/unixorn/awesome-zsh-plugins)
 is a list of zsh plugins that you may find helpful.
 
+**Do it use sandbox for haskell dependencies?**
+Yes, it support installation by `stack` or in `cabal sandbox` as an option.
+
 **Why not write it in pure zsh?**
 [Trust](https://github.com/Tarrasch/zsh-bd)
 [me](https://github.com/Tarrasch/zsh-autoenv), [it](https://github.com/Tarrasch/zsh-mcd)
@@ -202,8 +205,5 @@ is a list of zsh plugins that you may find helpful.
 [language](https://github.com/Tarrasch/zsh-functional).
 
 **Why Haskell?** I love it.
-
-**Do it use sandbox for haskell dependencies?**
-Yes, it support installation by `stack` or in `cabal sandbox` as an option.
 
 [command-not-found]: https://github.com/Tarrasch/zsh-command-not-found
