@@ -24,10 +24,10 @@ antigen-hs-ask () {
     local RESPONSE=$(eval $REQUEST ; echo $RESPONSE)
 
     case $RESPONSE in
-      [yY] | $'\n' ) echo $fg[yellow]'Yes'$reset_color
-                     eval $2
-                     break
-                     ;;
+      [yY] | "" ) echo $fg[yellow]'Yes'$reset_color
+                  eval $2
+                  break
+                  ;;
       [nN] ) echo $fg[blue]'No'$reset_color
              if [[ $# == 3 ]]; then
                eval $3
