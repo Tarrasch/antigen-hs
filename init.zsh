@@ -44,11 +44,8 @@ antigen-hs-ask () {
 antigen-hs-sandbox () {
   ANTIGEN_HS_SANDBOX=$1
 
-  if [[ ! -d "$ANTIGEN_HS_HOME"/$2 ]] ; then
-    cd "$ANTIGEN_HS_HOME" && eval "${@:3}" 2>&1
-    local ANTIGEN_HS_SANDBOX_RESULT=$?
-    cd $OLDPWD
-  fi
+  eval "${@:3}" 2>&1
+  local ANTIGEN_HS_SANDBOX_RESULT=$?
   return "$ANTIGEN_HS_SANDBOX_RESULT"
 }
 
@@ -168,9 +165,11 @@ antigen-hs-compile () {
 
 () {
   autoload -U colors && colors
-  if ! antigen-hs-init-source ; then
-    antigen-hs-ask "Try to setup?" antigen-hs-setup
-  fi
+    if ! antigen-hs-init-source ; then
+     ( cd $ANTIGEN_HS_HOME;
+       antigen-hs-ask "Try to setup?" antigen-hs-setup
+     )
+    fi
   unfunction antigen-hs-init-source
   unfunction antigen-hs-setup
   unfunction antigen-hs-repeat
