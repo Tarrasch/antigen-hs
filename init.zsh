@@ -164,9 +164,9 @@ antigen-hs-compile () {
 }
 
 () {
-  autoload -U colors && colors
     if ! antigen-hs-init-source ; then
      ( cd $ANTIGEN_HS_HOME;
+       autoload -U colors && colors
        antigen-hs-ask "Try to setup?" antigen-hs-setup
      )
     fi
