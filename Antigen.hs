@@ -212,15 +212,17 @@ die msg = putStrLn msg >> exitFailure
 -- | Match for one single *.plugin.zsh file
 strictSourcingStrategy :: SourcingStrategy
 strictSourcingStrategy = do
-    files <- getCurrentDirectory >>= listFiles
+    directory <- getCurrentDirectory
+    files <- listFiles directory
     let matches = filter (".plugin.zsh" `isSuffixOf`) files
     case matches of
         [file] -> return [file]
         [] -> die $
-            "No *.plugin.zsh file! " ++
+            "No *.plugin.zsh file in " ++
+            directory ++ "! " ++
             "See antigenSourcingStrategy example in README " ++
             "on how to configure this."
-        _  -> die "Too many *.plugin.zsh files!"
+        _  -> die ("Too many *.plugin.zsh files in " ++ directory ++ "!")
 
 
 -- | Find what to source, using the strategy described here:
