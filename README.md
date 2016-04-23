@@ -36,8 +36,8 @@ Since this plugin is written in Haskell, you have to download it:
 
   And if you won't use `cabal sandbox`:
 
-        $ caball update
-        $ caball install base text directory filepath process
+        $ cabal update
+        $ cabal install base text directory filepath process
 
 - installation through `stack`:
 
