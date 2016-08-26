@@ -1,9 +1,10 @@
+sudo: false
 language: haskell
 ghc:
   - 7.8
 install:
-  - "sudo apt-get install zsh"
+  - "apt-get install zsh"
   - "cabal install text"
-  - "sudo apt-get install python-pip"
-  - "sudo pip install cram"
+  - "apt-get install python-pip"
+  - "pip install cram"
 script: "make test"
