@@ -131,11 +131,11 @@ And let withard to help you setup and recompile your configuration:
 
 ## Usage
 
-Each time you update `MyAntigen.hs` you have to run `antigen-hs-compile`
+Each time you update `MyAntigen.hs` you have to run `antigen-hs-setup`
 
 ## Limitations
 
-The antigen plugin does way more than it should (just look at its bloated
+The original [antigen] plugin does way more than it should (just look at its bloated
 command list). This plugin tries to be minimal, if you are enough experienced
 with computers to use a zsh plugin manager, you can delete and manage the
 repositories in `~/.antigen-hs/repos` manually yourself!
