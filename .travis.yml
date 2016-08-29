@@ -2,10 +2,12 @@ sudo: false
 language: haskell
 ghc:
   - 7.8
+addons:
+  apt:
+    packages:
+      - zsh
+      - python-pip
 before_install:
-  - sudo apt-get -qq update
-  - apt-get install zsh
   - pip install cram
-  - apt-get install python-pip
   - cabal install text
 script: "make test"
