@@ -8,6 +8,6 @@ addons:
       - zsh
       - python-pip
 before_install:
-  - pip install cram
-  - cabal install text
+  - pip install --user cram
+  - cabal install --user text
 script: "make test"
