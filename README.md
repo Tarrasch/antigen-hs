@@ -185,7 +185,7 @@ not bloated. I'll let you choose side yourself. :)
 
 **What about the antigen commands like `theme` and others?** I do not found
 them useful or stable so I rather not have them. I rather rely on my own zsh fu
-when it comes to choirs like updating the repositories (nuking the
+when it comes to chores like updating the repositories (nuking the
 `~/.antigen-hs` folder) than relying on some shaky commands of antigen.
 
 **Can I only source GitHub repositories?** At the moment yes, patches are very welcome! :)
