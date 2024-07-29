@@ -1,3 +1,15 @@
+# NOTE of better alternatives as of 2024
+
+2024 update: I still would never recommend [oh-my-zsh] or [antigen]. But this
+repo, antigen-hs, has also a big share of problems and I would not recommend
+anyone to use it either.  You still may of course, especially if you like
+Haskell. :)
+
+Instead, I would consider using [zplug](https://github.com/zplug/zplug) which I
+use in [my own dotfiles](https://github.com/Tarrasch/dotfiles/tree/master/zsh).
+
+# REST OF README since 2016
+
 [![Build Status](https://travis-ci.org/Tarrasch/antigen-hs.svg?branch=master)](https://travis-ci.org/Tarrasch/antigen-hs)
 
 Once a zsh user realizes that [oh-my-zsh] and [antigen] actually is bloatware,
